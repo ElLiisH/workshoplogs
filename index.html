@@ -10,107 +10,58 @@
 
   <style>
     :root {
-      --bg-color: #f8fafc;
-      --text-color: #0f172a;
-      --card-bg: #ffffff;
-      --border-color: #e2e8f0;
-      --primary-color: #4f46e5;
-      --primary-hover: #4338ca;
-      --text-muted: #64748b;
+      --bg-color: #f8fafc; --text-color: #0f172a; --card-bg: #ffffff;
+      --border-color: #e2e8f0; --primary-color: #4f46e5; --text-muted: #64748b;
       --input-bg: #ffffff;
     }
-
     :root.dark {
-      --bg-color: #0f172a;
-      --text-color: #f1f5f9;
-      --card-bg: #1e293b;
-      --border-color: #334155;
-      --text-muted: #94a3b8;
-      --input-bg: #0f172a;
+      --bg-color: #0f172a; --text-color: #f1f5f9; --card-bg: #1e293b;
+      --border-color: #334155; --text-muted: #94a3b8; --input-bg: #0f172a;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      transition: background 0.3s ease;
+      font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color);
+      display: flex; align-items: center; justify-content: center; min-height: 100vh; transition: 0.3s;
     }
 
     .login-card {
-      background: var(--card-bg);
-      padding: 2.5rem;
-      border-radius: 16px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      width: 100%;
-      max-width: 400px;
-      position: relative;
+      background: var(--card-bg); padding: 2.5rem; border-radius: 16px; border: 1px solid var(--border-color);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); text-align: center; width: 100%; max-width: 400px;
     }
 
     .brand-logo {
-      width: 50px; height: 50px;
-      background: var(--primary-color);
-      color: white;
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: bold; font-size: 20px; margin: 0 auto 1.5rem;
+      width: 50px; height: 50px; background: var(--primary-color); color: white; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; margin: 0 auto 1.5rem;
     }
 
     .form-group { text-align: left; margin-bottom: 1.25rem; }
     label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
 
     .input-wrapper { position: relative; }
-    .input-wrapper i {
-      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-      color: var(--text-muted); font-size: 14px;
-    }
+    .input-wrapper i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 14px; }
 
     input {
-      width: 100%; padding: 12px 12px 12px 40px; border-radius: 8px;
-      border: 1px solid var(--border-color); background: var(--input-bg);
-      color: inherit; font-family: inherit; transition: all 0.2s;
+      width: 100%; padding: 12px 12px 12px 40px; border-radius: 8px; border: 1px solid var(--border-color);
+      background: var(--input-bg); color: inherit; font-family: inherit; transition: 0.2s;
     }
 
     .btn-login {
-      width: 100%; background: var(--primary-color); color: white;
-      padding: 12px; border-radius: 8px; border: none;
-      font-weight: 600; font-size: 16px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; background: var(--primary-color); color: white; padding: 12px; border-radius: 8px;
+      border: none; font-weight: 600; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
     }
-
     .btn-login:disabled { opacity: 0.7; cursor: not-allowed; }
 
-    /* ==============================
-       THE ROLLING RING (SPINNER)
-       ============================== */
     .spinner {
-      width: 20px; height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      display: none; /* Hidden by default */
+      width: 20px; height: 20px; border: 3px solid rgba(255, 255, 255, 0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
+    @keyframes spin { to { transform: rotate(360deg); } }
     .theme-switcher { position: fixed; top: 20px; right: 20px; }
-    .btn-circle {
-      width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color);
-      background: var(--card-bg); color: var(--text-color); cursor: pointer;
-    }
+    .btn-circle { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); cursor: pointer; }
   </style>
 </head>
-
 <body>
 
 <div class="theme-switcher">
@@ -119,7 +70,7 @@
 
 <div class="login-card">
   <div class="brand-logo">ICT</div>
-  <h1 style="font-size: 24px; margin-bottom: 0.5rem;">ICT WorkShop Portal</h1>
+  <h1 style="font-size: 24px; margin-bottom: 0.5rem;">ICT Workshop Portal</h1>
   <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 2rem;">Authorized Personnel Only</p>
 
   <form id="loginForm">
@@ -127,7 +78,7 @@
       <label>Technician ID</label>
       <div class="input-wrapper">
         <i class="fa-solid fa-user-shield"></i>
-        <input type="text" id="username" placeholder="Enter ID" required>
+        <input type="text" id="username" placeholder="Enter Admin or Tech ID" required>
       </div>
     </div>
 
@@ -161,39 +112,66 @@
     applyTheme();
   };
 
-  // FAKE VALIDATION LOGIC
+  // ROLE-BASED LOGIN LOGIC
   document.getElementById("loginForm").onsubmit = function(e) {
     e.preventDefault();
 
+    const userInp = document.getElementById("username").value;
     const btn = document.getElementById("signInBtn");
     const btnText = document.getElementById("btnText");
     const spinner = document.getElementById("btnSpinner");
     const statusMsg = document.getElementById("statusMsg");
-    const inputs = this.querySelectorAll("input");
 
-    // 1. Enter Loading State
+    // 1. Loading State
     btn.disabled = true;
-    inputs.forEach(i => i.disabled = true);
-    btnText.textContent = "Validating...";
+    btnText.textContent = "Authenticating...";
     spinner.style.display = "block";
-    statusMsg.textContent = "Connecting to Secure Server...";
+    statusMsg.textContent = "Handshaking with ICT Mainframe...";
 
-    // 2. Generate random delay between 4 and 8 seconds
-    const delay = Math.floor(Math.random() * (8000 - 4000 + 1)) + 4000;
+    // 2. Technician Registry (Map IDs to Names)
+    const techMap = {
+      "TECH001": "John Doe",
+      "TECH002": "James Smith",
+      "TECH003": "Sarah Connor",
+      "TECH004": "Robert Brown",
+      "TECH005": "Emily Davis"
+    };
 
-    // 3. Update status message halfway through
+    // 3. Identification Logic
+    let role = "Guest";
+    let displayName = userInp;
+
+    if (userInp.toLowerCase() === "admin") {
+      role = "Admin";
+      displayName = "System Administrator";
+    } else if (techMap[userInp.toUpperCase()]) {
+      role = "Technician";
+      displayName = techMap[userInp.toUpperCase()];
+    } else {
+      // Logic for invalid user
+      setTimeout(() => {
+        btn.disabled = false;
+        btnText.textContent = "Sign In";
+        spinner.style.display = "none";
+        statusMsg.textContent = "Error: Unauthorized ID.";
+        statusMsg.style.color = "#ef4444";
+      }, 1500);
+      return;
+    }
+
+    // 4. Save Session Data locally for workshoplocal.html to read
+    sessionStorage.setItem("currentUser", displayName);
+    sessionStorage.setItem("userRole", role);
+
+    // 5. Simulated Delay
+    const delay = Math.floor(Math.random() * 2000) + 2000;
     setTimeout(() => {
-      statusMsg.textContent = "Verifying Credentials & Access Level...";
-    }, delay / 2);
-
-    // 4. Final Redirection
-    setTimeout(() => {
-      statusMsg.textContent = "Access Granted. Redirecting...";
-      statusMsg.style.color = "#10b981"; // Change to success green
+      statusMsg.textContent = "Access Granted. Initializing " + role + " Profile...";
+      statusMsg.style.color = "#10b981";
       
       setTimeout(() => {
         window.location.href = "workshoplocal.html";
-      }, 800);
+      }, 1000);
     }, delay);
   };
 
@@ -202,4 +180,3 @@
 
 </body>
 </html>
-
