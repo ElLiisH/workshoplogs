@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ICT Logbook Pro | Dispatch & Analytics</title>
+  <title>ICT Logbook Pro | Leaderboard Edition</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -13,7 +13,7 @@
     :root {
       --bg-color: #f8fafc; --text-color: #0f172a; --sidebar-bg: #ffffff; --card-bg: #ffffff;
       --border-color: #e2e8f0; --primary-color: #4f46e5; --text-muted: #64748b;
-      --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+      --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --gold: #facc15;
     }
     :root.dark {
       --bg-color: #0f172a; --text-color: #f1f5f9; --sidebar-bg: #1e293b; --card-bg: #1e293b;
@@ -21,303 +21,246 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: 0.3s; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); transition: 0.3s; overflow-x: hidden; }
     .app-wrapper { display: flex; min-height: 100vh; }
+
+    /* AUTH OVERLAY */
+    #authOverlay { position: fixed; inset: 0; background: var(--bg-color); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .auth-card { width: 400px; text-align: center; border: 1px solid var(--border-color); }
 
     /* SIDEBAR */
     #sidebar { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
     nav { padding: 1rem; flex: 1; }
-    .nav-btn { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: inherit; font-size: 14px; width: 100%; margin-bottom: 5px; text-decoration: none; }
+    .nav-btn { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-radius: 8px; cursor: pointer; border: none; background: transparent; color: inherit; font-size: 14px; width: 100%; margin-bottom: 5px; text-decoration: none; }
     .nav-btn:hover { background: var(--border-color); }
     .active-nav { background: var(--primary-color); color: white; }
+
+    /* LEADERBOARD PANEL */
+    #leaderboardPanel { position: fixed; right: -350px; top: 0; width: 320px; height: 100vh; background: var(--sidebar-bg); border-left: 1px solid var(--border-color); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 1500; padding: 2rem; box-shadow: -10px 0 30px rgba(0,0,0,0.05); }
+    #leaderboardPanel.open { right: 0; }
+    .rank-item { display: flex; align-items: center; gap: 15px; padding: 12px; border-bottom: 1px solid var(--border-color); }
+    .rank-num { font-weight: 800; font-size: 18px; color: var(--text-muted); width: 25px; }
 
     /* LAYOUT */
     main { flex: 1; padding: 2.5rem; max-width: 1400px; margin: 0 auto; width: 100%; }
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
     .card { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
-
-    .section-header { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;}
-
-    /* TOOLBAR */
-    .toolbar { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .search-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); color: inherit; min-width: 250px; }
-    .filter-select { padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); color: inherit; cursor: pointer; }
-
-    /* TABLES */
+    
     .table-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
     table { width: 100%; border-collapse: collapse; }
-    th { padding: 1rem; background: rgba(0,0,0,0.02); text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
-    td { padding: 1rem; border-top: 1px solid var(--border-color); font-size: 14px; }
-    
-    .priority-Critical { border-left: 4px solid var(--danger); }
-    .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+    th { padding: 1rem; background: rgba(0,0,0,0.02); text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    td { padding: 1rem; border-top: 1px solid var(--border-color); font-size: 13.5px; }
+
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .badge-open { background: rgba(79, 70, 229, 0.1); color: var(--primary-color); }
     .badge-resolved { background: rgba(16, 185, 129, 0.1); color: var(--success); }
 
-    .btn-assign { background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; }
-
-    .analytics-footer { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem; }
-
-    #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    .admin-only { display: none; }
   </style>
 </head>
 <body>
 
+<div id="authOverlay">
+  <div class="card auth-card">
+    <h1 style="margin-bottom: 10px;"><i class="fa-solid fa-users-gear"></i> Portal Access</h1>
+    <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px;">Select profile to start your session.</p>
+    <select id="userRoleSelect" style="width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+        <option value="Admin">System Administrator</option>
+        <option value="John Doe">John Doe (Tech)</option>
+        <option value="James Smith">James Smith (Tech)</option>
+        <option value="Sarah Connor">Sarah Connor (Tech)</option>
+        <option value="Robert Brown">Robert Brown (Tech)</option>
+        <option value="Emily Davis">Emily Davis (Tech)</option>
+    </select>
+    <button onclick="login()" style="width: 100%; background: var(--primary-color); color: white; padding: 14px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer;">Enter Workshop</button>
+  </div>
+</div>
+
 <div class="app-wrapper">
   <aside id="sidebar">
     <div style="padding: 1.5rem; border-bottom: 1px solid var(--border-color);">
-      <h2 style="font-size: 18px; font-weight: 800;"><i class="fa-solid fa-server" style="color:var(--primary-color)"></i> ICT Command</h2>
+      <h2 style="font-size: 18px; font-weight: 800;"><i class="fa-solid fa-server" style="color:var(--primary-color)"></i> ICT Fleet</h2>
     </div>
     <nav>
-      <a href="#" class="nav-btn active-nav"><i class="fa-solid fa-clipboard-list"></i> <span>Dispatcher</span></a>
-      <button id="themeToggle" class="nav-btn"><i class="fa-solid fa-circle-half-stroke"></i> <span id="themeLabel">Light Mode</span></button>
-      <a href="index.html" class="nav-btn" style="color:var(--danger); margin-top:20px;"><i class="fa-solid fa-door-open"></i> <span>Sign Out</span></a>
+      <div class="nav-btn active-nav"><div><i class="fa-solid fa-house"></i> <span style="margin-left:10px">Workbench</span></div></div>
+      <button onclick="toggleLeaderboard()" class="nav-btn"><i class="fa-solid fa-trophy"></i> <span>Leaderboard</span></button>
+      <button id="themeToggle" class="nav-btn"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
+      <button onclick="location.reload()" class="nav-btn" style="color:var(--danger); margin-top:20px;"><i class="fa-solid fa-power-off"></i> <span>Sign Out</span></button>
     </nav>
   </aside>
 
   <main>
     <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
       <div>
-        <h1 style="font-size: 28px; font-weight: 800;">Fleet Maintenance</h1>
-        <p style="color: var(--text-muted);">Manage and dispatch technical faults.</p>
+        <h1 style="font-size: 28px; font-weight: 800;" id="displayUserName">Workshop</h1>
+        <p style="color: var(--text-muted);" id="headerSubtitle">Role-based workstation access.</p>
       </div>
-      <button id="addEntryBtn" style="background:var(--primary-color); color:white; padding:12px 28px; border-radius:10px; border:none; cursor:pointer; font-weight:700;">+ Custom Ticket</button>
+      <button id="addEntryBtn" class="admin-only" style="background:var(--primary-color); color:white; padding:12px 28px; border-radius:10px; border:none; cursor:pointer; font-weight:700;">+ Dispatch Fault</button>
     </header>
 
     <div class="stats-row">
-      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">ACTIVE TICKETS</p><div id="statOpen" style="font-size:24px; font-weight:800;">0</div></div>
-      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">COMPLETED</p><div id="statResolved" style="font-size:24px; font-weight:800;">0</div></div>
-      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">PENDING QUEUE</p><div id="statPending" style="font-size:24px; font-weight:800; color:var(--warning);">0</div></div>
+      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">OPEN TICKETS</p><div id="statOpen" style="font-size:24px; font-weight:800;">0</div></div>
+      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">PERSONAL SCORE</p><div id="performanceScore" style="font-size:24px; font-weight:800; color:var(--success);">0%</div></div>
+      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">RESOLVED</p><div id="statResolved" style="font-size:24px; font-weight:800;">0</div></div>
     </div>
 
-    <div class="section-header">
-        <span><i class="fa-solid fa-bolt"></i> Incoming Technical Faults</span>
-        <button onclick="restockFaults()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Restock Queue</button>
-    </div>
-    <div class="table-container" style="border-color: var(--warning);">
-        <table id="pendingTable">
-            <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Fault Description</th>
-                    <th>Priority</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="pendingTbody"></tbody>
-        </table>
+    <div id="adminQueueSection" class="admin-only">
+        <h3 style="font-size: 12px; margin-bottom: 10px; color: var(--text-muted);">INCOMING FAULTS</h3>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Device</th><th>Fault Description</th><th>Priority</th><th>Action</th></tr></thead>
+                <tbody id="pendingTbody"></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="section-header"><span><i class="fa-solid fa-list-check"></i> Service Logs & History</span></div>
-    <div class="toolbar">
-        <input type="text" id="globalSearch" class="search-input" placeholder="Search by Technician or Description...">
-        <select id="categoryFilter" class="filter-select">
-            <option value="All">All Categories</option>
-            <option value="Laptop">Laptops</option>
-            <option value="Desktop">Desktops</option>
-            <option value="Printer">Printers</option>
-            <option value="Scanner">Scanners</option>
-            <option value="UPS">UPS Units</option>
-            <option value="Other">Other</option>
-        </select>
-    </div>
-
+    <h3 style="font-size: 12px; margin-bottom: 10px; color: var(--text-muted);">ACTIVE WORK LOGS</h3>
     <div class="table-container">
       <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Technician</th>
-            <th>Device</th>
-            <th>Logged At</th>
-            <th>Status</th>
-            <th>Priority</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+        <thead><tr><th>ID</th><th class="admin-only">Technician</th><th>Device</th><th>Status</th><th>Priority</th><th>Action</th></tr></thead>
         <tbody id="logTbody"></tbody>
       </table>
-    </div>
-
-    <div class="analytics-footer">
-      <div class="card" style="padding: 2rem;">
-        <h3 style="margin-bottom: 1rem;">System Summary</h3>
-        <p style="color: var(--text-muted); font-size: 14px;">This logbook utilizes <strong>Triage Sorting</strong>. Items dispatched from the fault queue are tracked in real-time. Use the "Resolve" action in the logs to update the workflow distribution chart below.</p>
-      </div>
-      <div class="card" style="text-align: center;">
-        <h3 style="font-size: 14px; margin-bottom: 10px;">Workflow Distribution</h3>
-        <div style="max-width: 250px; margin: 0 auto;"><canvas id="statusChart"></canvas></div>
-      </div>
     </div>
   </main>
 </div>
 
-<div id="modal">
-  <div class="card" style="width: 500px;">
-    <h2 id="modalTitle" style="margin-bottom: 1.5rem;">Log Service Ticket</h2>
-    <form id="entryForm" style="display:flex; flex-direction:column; gap:12px;">
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <select name="technician" id="techSelect" required class="filter-select">
-            <option value="" disabled selected>Assign Technician</option>
-            <option>John Doe</option><option>James Smith</option><option>Sarah Connor</option><option>Robert Brown</option><option>Emily Davis</option>
-        </select>
-        <select name="deviceType" id="deviceSelect" required class="filter-select">
-            <option value="" disabled selected>Device Category</option>
-            <option>Laptop</option><option>Desktop</option><option>Printer</option><option>Scanner</option><option>UPS</option><option>Other</option>
-        </select>
-      </div>
-      <textarea name="description" id="descSelect" placeholder="Technical fault details..." required style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:inherit; height:80px; font-family:inherit;"></textarea>
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <select name="status" class="filter-select"><option>Open</option><option>Resolved</option></select>
-        <select name="priority" id="prioritySelect" class="filter-select"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
-        <button type="button" onclick="document.getElementById('modal').style.display='none'" style="cursor:pointer; background:none; border:none;">Cancel</button>
-        <button type="submit" style="background:var(--primary-color); color:white; padding:12px 24px; border-radius:8px; border:none; font-weight:700; cursor:pointer;">Initialize Ticket</button>
+<div id="leaderboardPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+        <h2 style="font-size: 18px;">Team Ranking</h2>
+        <button onclick="toggleLeaderboard()" style="background:none; border:none; cursor:pointer; font-size:20px; color:var(--text-muted);">&times;</button>
+    </div>
+    <div id="rankingList">
+        </div>
+</div>
+
+<div id="modal" style="display:none">
+  <div class="card" style="width: 500px; margin: 10% auto;">
+    <h2>Dispatch Service Ticket</h2>
+    <form id="entryForm" style="display:flex; flex-direction:column; gap:12px; margin-top:20px;">
+      <select name="technician" required id="modalTech" style="padding:10px; border-radius:8px;">
+          <option>John Doe</option><option>James Smith</option><option>Sarah Connor</option><option>Robert Brown</option><option>Emily Davis</option>
+      </select>
+      <select name="deviceType" id="modalDevice" required style="padding:10px; border-radius:8px;">
+          <option>Laptop</option><option>Desktop</option><option>Printer</option><option>Scanner</option><option>UPS</option>
+      </select>
+      <textarea name="description" id="modalDesc" placeholder="Fault description..." required style="height:80px; padding:10px; border-radius:8px;"></textarea>
+      <select name="priority" id="modalPriority" style="padding:10px; border-radius:8px;"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" onclick="document.getElementById('modal').style.display='none'">Cancel</button>
+          <button type="submit" style="background:var(--primary-color); color:white; padding:10px 20px; border-radius:8px; border:none; font-weight:700;">Initialize</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-const defaultFaults = [
-    { type: 'Laptop', desc: 'Motherboard short-circuit / No Power', priority: 'Critical' },
-    { type: 'Printer', desc: 'Fuser unit overheating - Error 50.4', priority: 'High' },
-    { type: 'UPS', desc: 'Battery backup failure during load test', priority: 'Medium' },
-    { type: 'Scanner', desc: 'Optical sensor calibration required', priority: 'Low' },
-    { type: 'Desktop', desc: 'Intermittent Blue Screen (BSOD) - RAM Fault', priority: 'High' }
-];
+const techs = ["John Doe", "James Smith", "Sarah Connor", "Robert Brown", "Emily Davis"];
+const sampleFaults = [{ type: 'Laptop', desc: 'Broken Hinge / Motherboard Stress', priority: 'High' }];
 
-let logs = JSON.parse(localStorage.getItem("portfolio_v4") || "[]");
-let pending = JSON.parse(localStorage.getItem("pending_v4")) || [...defaultFaults];
-let statusChart = null;
-let currentPendingIndex = null;
-const pWeights = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
+let currentUser = null;
+let logs = JSON.parse(localStorage.getItem("logs_v5") || "[]");
+let pending = JSON.parse(localStorage.getItem("pending_v5")) || sampleFaults;
 
-const applyTheme = () => {
-    const isDark = localStorage.getItem("theme") === "dark";
-    document.documentElement.classList.toggle("dark", isDark);
-    document.getElementById("themeLabel").innerText = isDark ? "Dark Mode" : "Light Mode";
-};
+function login() {
+    currentUser = document.getElementById("userRoleSelect").value;
+    document.getElementById("authOverlay").style.display = 'none';
+    setupUI();
+    render();
+}
 
-document.getElementById("themeToggle").onclick = () => {
-    localStorage.setItem("theme", localStorage.getItem("theme") === "dark" ? "light" : "dark");
-    applyTheme();
-};
-
-function updateChart() {
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    const open = logs.filter(l => l.status === 'Open').length;
-    const resolved = logs.filter(l => l.status === 'Resolved').length;
-    if (statusChart) statusChart.destroy();
-    statusChart = new Chart(ctx, {
-        type: 'pie',
-        data: { labels: ['Open', 'Resolved'], datasets: [{ data: [open, resolved], backgroundColor: ['#4f46e5', '#10b981'], borderWidth: 0 }] },
-        options: { plugins: { legend: { position: 'bottom' } } }
-    });
+function setupUI() {
+    document.getElementById("displayUserName").innerText = "Welcome, " + currentUser;
+    if (currentUser === 'Admin') {
+        document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'block');
+    }
 }
 
 function render() {
-    // Render Pending
+    const tbody = document.getElementById("logTbody");
     const pTbody = document.getElementById("pendingTbody");
+    
+    let visibleLogs = currentUser === 'Admin' ? logs : logs.filter(l => l.technician === currentUser);
+    
+    tbody.innerHTML = "";
+    visibleLogs.forEach(log => {
+        tbody.innerHTML += `
+            <tr>
+                <td style="font-weight:700; color:var(--primary-color)">${log.id}</td>
+                <td class="${currentUser === 'Admin' ? '' : 'admin-only'}">${log.technician}</td>
+                <td>${log.deviceType}</td>
+                <td><span class="badge ${log.status === 'Resolved' ? 'badge-resolved' : 'badge-open'}" onclick="toggleStatus('${log.id}')">${log.status}</span></td>
+                <td><strong>${log.priority}</strong></td>
+                <td><button onclick="deleteLog('${log.id}')" style="border:none; background:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`;
+    });
+
     pTbody.innerHTML = "";
     pending.forEach((f, i) => {
-        pTbody.innerHTML += `<tr>
-            <td><strong>${f.type}</strong></td>
-            <td style="font-size:13px">${f.desc}</td>
-            <td><span class="badge priority-${f.priority}" style="background:rgba(245,158,11,0.1); color:var(--warning)">${f.priority}</span></td>
-            <td><button class="btn-assign" onclick="dispatchFault(${i})">Assign</button></td>
-        </tr>`;
+        pTbody.innerHTML += `<tr><td>${f.type}</td><td style="font-size:12px">${f.desc}</td><td>${f.priority}</td><td><button onclick="openAssign(${i})" class="badge badge-open">Assign</button></td></tr>`;
     });
-    document.getElementById("statPending").innerText = pending.length;
 
-    // Render Logs
-    const tbody = document.getElementById("logTbody");
-    const query = document.getElementById("globalSearch").value.toLowerCase();
-    const cat = document.getElementById("categoryFilter").value;
-    let processed = [...logs].sort((a,b) => (pWeights[b.priority] || 0) - (pWeights[a.priority] || 0));
+    // Score Logic
+    let res = visibleLogs.filter(l => l.status === 'Resolved').length;
+    let score = visibleLogs.length > 0 ? Math.round((res / visibleLogs.length) * 100) : 0;
+    document.getElementById("performanceScore").innerText = score + "%";
+    document.getElementById("statOpen").innerText = visibleLogs.filter(l => l.status === 'Open').length;
+    document.getElementById("statResolved").innerText = res;
 
-    tbody.innerHTML = "";
-    processed.filter(l => (cat === "All" || l.deviceType === cat) && (l.technician.toLowerCase().includes(query) || l.description.toLowerCase().includes(query))).forEach(log => {
-        const tr = document.createElement("tr");
-        if(log.priority === 'Critical') tr.className = 'priority-Critical';
-        tr.innerHTML = `
-            <td style="font-weight:700; color:var(--primary-color)">${log.id}</td>
-            <td>${log.technician}</td>
-            <td><i class="fa-solid fa-tag" style="font-size:10px; opacity:0.5"></i> ${log.deviceType}</td>
-            <td style="font-size:12px; color:var(--text-muted)">${log.date}</td>
-            <td><span class="badge ${log.status === 'Resolved' ? 'badge-resolved' : 'badge-open'}" onclick="toggleStatus('${log.id}')" style="cursor:pointer">${log.status}</span></td>
-            <td><strong>${log.priority}</strong></td>
-            <td><button onclick="deleteLog('${log.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-trash-can"></i></button></td>
-        `;
-        tbody.appendChild(tr);
+    updateLeaderboard();
+    localStorage.setItem("logs_v5", JSON.stringify(logs));
+    localStorage.setItem("pending_v5", JSON.stringify(pending));
+}
+
+function updateLeaderboard() {
+    let stats = techs.map(t => {
+        let tLogs = logs.filter(l => l.technician === t);
+        let solved = tLogs.filter(l => l.status === 'Resolved').length;
+        let score = tLogs.length > 0 ? Math.round((solved / tLogs.length) * 100) : 0;
+        return { name: t, score: score };
+    }).sort((a,b) => b.score - a.score);
+
+    const list = document.getElementById("rankingList");
+    list.innerHTML = "";
+    stats.forEach((s, i) => {
+        list.innerHTML += `
+            <div class="rank-item">
+                <div class="rank-num">${i+1}</div>
+                <div style="flex:1">
+                    <div style="font-weight:700; font-size:14px">${s.name} ${i === 0 ? '🏆' : ''}</div>
+                    <div style="font-size:11px; color:var(--text-muted)">Efficiency: ${s.score}%</div>
+                </div>
+            </div>`;
     });
-    
-    document.getElementById("statOpen").innerText = logs.filter(l => l.status === 'Open').length;
-    document.getElementById("statResolved").innerText = logs.filter(l => l.status === 'Resolved').length;
-    updateChart();
-    localStorage.setItem("portfolio_v4", JSON.stringify(logs));
-    localStorage.setItem("pending_v4", JSON.stringify(pending));
 }
 
-function dispatchFault(index) {
-    currentPendingIndex = index;
-    const f = pending[index];
-    document.getElementById("deviceSelect").value = f.type;
-    document.getElementById("descSelect").value = f.desc;
-    document.getElementById("prioritySelect").value = f.priority;
-    document.getElementById("modalTitle").innerText = "Dispatch Fault to Technician";
-    document.getElementById("modal").style.display = 'flex';
-}
-
-function restockFaults() {
-    pending = [...defaultFaults];
-    render();
-}
-
-function toggleStatus(id) {
-    const log = logs.find(l => l.id === id);
-    log.status = log.status === 'Open' ? 'Resolved' : 'Open';
-    render();
-}
-
-document.getElementById("addEntryBtn").onclick = () => {
-    currentPendingIndex = null;
-    document.getElementById("entryForm").reset();
-    document.getElementById("modalTitle").innerText = "Log Custom Service Ticket";
-    document.getElementById("modal").style.display = 'flex';
+function toggleLeaderboard() { document.getElementById("leaderboardPanel").classList.toggle("open"); }
+function toggleStatus(id) { let l = logs.find(x => x.id === id); l.status = l.status === 'Open' ? 'Resolved' : 'Open'; render(); }
+function deleteLog(id) { logs = logs.filter(l => l.id !== id); render(); }
+function openAssign(i) { 
+    let f = pending[i];
+    document.getElementById("modalDevice").value = f.type;
+    document.getElementById("modalDesc").value = f.desc;
+    document.getElementById("modal").style.display = 'block';
+    window.curIdx = i;
 }
 
 document.getElementById("entryForm").onsubmit = function(e) {
     e.preventDefault();
-    const fd = new FormData(this);
     logs.unshift({
-        id: "TCK-" + Math.floor(Math.random()*9000+1000),
-        technician: fd.get("technician"),
-        deviceType: fd.get("deviceType"),
-        description: fd.get("description"),
-        status: fd.get("status"),
-        priority: fd.get("priority"),
-        date: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
+        id: "TCK-" + Math.floor(Math.random()*9000),
+        technician: document.getElementById("modalTech").value,
+        deviceType: document.getElementById("modalDevice").value,
+        description: document.getElementById("modalDesc").value,
+        status: "Open",
+        priority: document.getElementById("modalPriority").value
     });
-    
-    if(currentPendingIndex !== null) pending.splice(currentPendingIndex, 1);
-    
+    if(window.curIdx != null) pending.splice(window.curIdx, 1);
     document.getElementById("modal").style.display = 'none';
     render();
-};
-
-function deleteLog(id) {
-    if(confirm("Delete this log?")) {
-        logs = logs.filter(l => l.id !== id);
-        render();
-    }
 }
 
-document.getElementById("globalSearch").oninput = render;
-document.getElementById("categoryFilter").onchange = render;
-applyTheme();
-render();
+document.getElementById("themeToggle").onclick = () => document.documentElement.classList.toggle("dark");
+document.getElementById("addEntryBtn").onclick = () => { window.curIdx = null; document.getElementById("modal").style.display = 'block'; };
 </script>
 </body>
 </html>
