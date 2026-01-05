@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ICT Logbook Pro | Advanced Portfolio Build</title>
+  <title>ICT Logbook Pro | Dispatch & Analytics</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -36,21 +36,25 @@
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
     .card { background: var(--card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
 
+    .section-header { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;}
+
     /* TOOLBAR */
     .toolbar { display: flex; gap: 10px; margin-bottom: 1.5rem; flex-wrap: wrap; }
     .search-input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); color: inherit; min-width: 250px; }
     .filter-select { padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--card-bg); color: inherit; cursor: pointer; }
 
-    /* TABLE */
+    /* TABLES */
     .table-container { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; margin-bottom: 2rem; }
     table { width: 100%; border-collapse: collapse; }
     th { padding: 1rem; background: rgba(0,0,0,0.02); text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; border-bottom: 1px solid var(--border-color); }
     td { padding: 1rem; border-top: 1px solid var(--border-color); font-size: 14px; }
     
-    .priority-critical { border-left: 4px solid var(--danger); }
+    .priority-Critical { border-left: 4px solid var(--danger); }
     .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
     .badge-open { background: rgba(79, 70, 229, 0.1); color: var(--primary-color); }
     .badge-resolved { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+
+    .btn-assign { background: var(--primary-color); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; }
 
     .analytics-footer { display: grid; grid-template-columns: 1fr 350px; gap: 2rem; border-top: 1px solid var(--border-color); padding-top: 2rem; }
 
@@ -65,7 +69,7 @@
       <h2 style="font-size: 18px; font-weight: 800;"><i class="fa-solid fa-server" style="color:var(--primary-color)"></i> ICT Command</h2>
     </div>
     <nav>
-      <a href="#" class="nav-btn active-nav"><i class="fa-solid fa-clipboard-list"></i> <span>Service Logs</span></a>
+      <a href="#" class="nav-btn active-nav"><i class="fa-solid fa-clipboard-list"></i> <span>Dispatcher</span></a>
       <button id="themeToggle" class="nav-btn"><i class="fa-solid fa-circle-half-stroke"></i> <span id="themeLabel">Light Mode</span></button>
       <a href="index.html" class="nav-btn" style="color:var(--danger); margin-top:20px;"><i class="fa-solid fa-door-open"></i> <span>Sign Out</span></a>
     </nav>
@@ -75,17 +79,36 @@
     <header style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
       <div>
         <h1 style="font-size: 28px; font-weight: 800;">Fleet Maintenance</h1>
-        <p style="color: var(--text-muted);">Triage-based workshop management system.</p>
+        <p style="color: var(--text-muted);">Manage and dispatch technical faults.</p>
       </div>
-      <button id="addEntryBtn" style="background:var(--primary-color); color:white; padding:12px 28px; border-radius:10px; border:none; cursor:pointer; font-weight:700;">+ New Ticket</button>
+      <button id="addEntryBtn" style="background:var(--primary-color); color:white; padding:12px 28px; border-radius:10px; border:none; cursor:pointer; font-weight:700;">+ Custom Ticket</button>
     </header>
 
     <div class="stats-row">
       <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">ACTIVE TICKETS</p><div id="statOpen" style="font-size:24px; font-weight:800;">0</div></div>
       <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">COMPLETED</p><div id="statResolved" style="font-size:24px; font-weight:800;">0</div></div>
-      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">AVG UPTIME</p><div style="font-size:24px; font-weight:800; color:var(--success);">99.8%</div></div>
+      <div class="card"><p style="font-size:11px; font-weight:700; color:var(--text-muted);">PENDING QUEUE</p><div id="statPending" style="font-size:24px; font-weight:800; color:var(--warning);">0</div></div>
     </div>
 
+    <div class="section-header">
+        <span><i class="fa-solid fa-bolt"></i> Incoming Technical Faults</span>
+        <button onclick="restockFaults()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Restock Queue</button>
+    </div>
+    <div class="table-container" style="border-color: var(--warning);">
+        <table id="pendingTable">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Fault Description</th>
+                    <th>Priority</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pendingTbody"></tbody>
+        </table>
+    </div>
+
+    <div class="section-header"><span><i class="fa-solid fa-list-check"></i> Service Logs & History</span></div>
     <div class="toolbar">
         <input type="text" id="globalSearch" class="search-input" placeholder="Search by Technician or Description...">
         <select id="categoryFilter" class="filter-select">
@@ -119,7 +142,7 @@
     <div class="analytics-footer">
       <div class="card" style="padding: 2rem;">
         <h3 style="margin-bottom: 1rem;">System Summary</h3>
-        <p style="color: var(--text-muted); font-size: 14px;">This logbook utilizes <strong>Triage Sorting</strong>. Tickets marked as <em>Critical</em> are automatically prioritized to the top of the queue regardless of entry date to ensure maximum uptime for essential ICT infrastructure.</p>
+        <p style="color: var(--text-muted); font-size: 14px;">This logbook utilizes <strong>Triage Sorting</strong>. Items dispatched from the fault queue are tracked in real-time. Use the "Resolve" action in the logs to update the workflow distribution chart below.</p>
       </div>
       <div class="card" style="text-align: center;">
         <h3 style="font-size: 14px; margin-bottom: 10px;">Workflow Distribution</h3>
@@ -131,22 +154,22 @@
 
 <div id="modal">
   <div class="card" style="width: 500px;">
-    <h2 style="margin-bottom: 1.5rem;">Log Service Ticket</h2>
+    <h2 id="modalTitle" style="margin-bottom: 1.5rem;">Log Service Ticket</h2>
     <form id="entryForm" style="display:flex; flex-direction:column; gap:12px;">
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <select name="technician" required class="filter-select">
+        <select name="technician" id="techSelect" required class="filter-select">
             <option value="" disabled selected>Assign Technician</option>
             <option>John Doe</option><option>James Smith</option><option>Sarah Connor</option><option>Robert Brown</option><option>Emily Davis</option>
         </select>
-        <select name="deviceType" required class="filter-select">
+        <select name="deviceType" id="deviceSelect" required class="filter-select">
             <option value="" disabled selected>Device Category</option>
             <option>Laptop</option><option>Desktop</option><option>Printer</option><option>Scanner</option><option>UPS</option><option>Other</option>
         </select>
       </div>
-      <textarea name="description" placeholder="Technical fault details..." required style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:inherit; height:80px; font-family:inherit;"></textarea>
+      <textarea name="description" id="descSelect" placeholder="Technical fault details..." required style="width:100%; padding:12px; border-radius:8px; border:1px solid var(--border-color); background:var(--card-bg); color:inherit; height:80px; font-family:inherit;"></textarea>
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
         <select name="status" class="filter-select"><option>Open</option><option>Resolved</option></select>
-        <select name="priority" class="filter-select"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
+        <select name="priority" id="prioritySelect" class="filter-select"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select>
       </div>
       <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:10px;">
         <button type="button" onclick="document.getElementById('modal').style.display='none'" style="cursor:pointer; background:none; border:none;">Cancel</button>
@@ -157,8 +180,18 @@
 </div>
 
 <script>
-let logs = JSON.parse(localStorage.getItem("portfolio_v3") || "[]");
+const defaultFaults = [
+    { type: 'Laptop', desc: 'Motherboard short-circuit / No Power', priority: 'Critical' },
+    { type: 'Printer', desc: 'Fuser unit overheating - Error 50.4', priority: 'High' },
+    { type: 'UPS', desc: 'Battery backup failure during load test', priority: 'Medium' },
+    { type: 'Scanner', desc: 'Optical sensor calibration required', priority: 'Low' },
+    { type: 'Desktop', desc: 'Intermittent Blue Screen (BSOD) - RAM Fault', priority: 'High' }
+];
+
+let logs = JSON.parse(localStorage.getItem("portfolio_v4") || "[]");
+let pending = JSON.parse(localStorage.getItem("pending_v4")) || [...defaultFaults];
 let statusChart = null;
+let currentPendingIndex = null;
 const pWeights = { 'Critical': 4, 'High': 3, 'Medium': 2, 'Low': 1 };
 
 const applyTheme = () => {
@@ -185,23 +218,35 @@ function updateChart() {
 }
 
 function render() {
+    // Render Pending
+    const pTbody = document.getElementById("pendingTbody");
+    pTbody.innerHTML = "";
+    pending.forEach((f, i) => {
+        pTbody.innerHTML += `<tr>
+            <td><strong>${f.type}</strong></td>
+            <td style="font-size:13px">${f.desc}</td>
+            <td><span class="badge priority-${f.priority}" style="background:rgba(245,158,11,0.1); color:var(--warning)">${f.priority}</span></td>
+            <td><button class="btn-assign" onclick="dispatchFault(${i})">Assign</button></td>
+        </tr>`;
+    });
+    document.getElementById("statPending").innerText = pending.length;
+
+    // Render Logs
     const tbody = document.getElementById("logTbody");
     const query = document.getElementById("globalSearch").value.toLowerCase();
     const cat = document.getElementById("categoryFilter").value;
-    
-    // PRIORITY SORT LOGIC
     let processed = [...logs].sort((a,b) => (pWeights[b.priority] || 0) - (pWeights[a.priority] || 0));
 
     tbody.innerHTML = "";
     processed.filter(l => (cat === "All" || l.deviceType === cat) && (l.technician.toLowerCase().includes(query) || l.description.toLowerCase().includes(query))).forEach(log => {
         const tr = document.createElement("tr");
-        if(log.priority === 'Critical') tr.className = 'priority-critical';
+        if(log.priority === 'Critical') tr.className = 'priority-Critical';
         tr.innerHTML = `
             <td style="font-weight:700; color:var(--primary-color)">${log.id}</td>
             <td>${log.technician}</td>
             <td><i class="fa-solid fa-tag" style="font-size:10px; opacity:0.5"></i> ${log.deviceType}</td>
             <td style="font-size:12px; color:var(--text-muted)">${log.date}</td>
-            <td><span class="badge ${log.status === 'Resolved' ? 'badge-resolved' : 'badge-open'}">${log.status}</span></td>
+            <td><span class="badge ${log.status === 'Resolved' ? 'badge-resolved' : 'badge-open'}" onclick="toggleStatus('${log.id}')" style="cursor:pointer">${log.status}</span></td>
             <td><strong>${log.priority}</strong></td>
             <td><button onclick="deleteLog('${log.id}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fa-solid fa-trash-can"></i></button></td>
         `;
@@ -211,9 +256,37 @@ function render() {
     document.getElementById("statOpen").innerText = logs.filter(l => l.status === 'Open').length;
     document.getElementById("statResolved").innerText = logs.filter(l => l.status === 'Resolved').length;
     updateChart();
+    localStorage.setItem("portfolio_v4", JSON.stringify(logs));
+    localStorage.setItem("pending_v4", JSON.stringify(pending));
 }
 
-document.getElementById("addEntryBtn").onclick = () => document.getElementById("modal").style.display = 'flex';
+function dispatchFault(index) {
+    currentPendingIndex = index;
+    const f = pending[index];
+    document.getElementById("deviceSelect").value = f.type;
+    document.getElementById("descSelect").value = f.desc;
+    document.getElementById("prioritySelect").value = f.priority;
+    document.getElementById("modalTitle").innerText = "Dispatch Fault to Technician";
+    document.getElementById("modal").style.display = 'flex';
+}
+
+function restockFaults() {
+    pending = [...defaultFaults];
+    render();
+}
+
+function toggleStatus(id) {
+    const log = logs.find(l => l.id === id);
+    log.status = log.status === 'Open' ? 'Resolved' : 'Open';
+    render();
+}
+
+document.getElementById("addEntryBtn").onclick = () => {
+    currentPendingIndex = null;
+    document.getElementById("entryForm").reset();
+    document.getElementById("modalTitle").innerText = "Log Custom Service Ticket";
+    document.getElementById("modal").style.display = 'flex';
+}
 
 document.getElementById("entryForm").onsubmit = function(e) {
     e.preventDefault();
@@ -227,16 +300,16 @@ document.getElementById("entryForm").onsubmit = function(e) {
         priority: fd.get("priority"),
         date: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
     });
-    localStorage.setItem("portfolio_v3", JSON.stringify(logs));
+    
+    if(currentPendingIndex !== null) pending.splice(currentPendingIndex, 1);
+    
     document.getElementById("modal").style.display = 'none';
-    this.reset();
     render();
 };
 
 function deleteLog(id) {
-    if(confirm("Confirm deletion?")) {
+    if(confirm("Delete this log?")) {
         logs = logs.filter(l => l.id !== id);
-        localStorage.setItem("portfolio_v3", JSON.stringify(logs));
         render();
     }
 }
