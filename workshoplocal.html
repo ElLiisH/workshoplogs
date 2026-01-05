@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Digitized ICT Workshop Logbook</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <style>
+    /* ==============================
+       CORE VARIABLES & THEMES
+       ============================== */
+    :root {
+      --bg-color: #f8fafc;
+      --text-color: #0f172a;
+      --sidebar-bg: #ffffff;
+      --card-bg: #ffffff;
+      --border-color: #e2e8f0;
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-muted: #64748b;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    :root.dark {
+      --bg-color: #0f172a;
+      --text-color: #f1f5f9;
+      --sidebar-bg: #1e293b;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-muted: #94a3b8;
+      --glass-bg: rgba(255, 255, 255, 0.06);
+    }
+
+    /* ==============================
+       BASE STYLES
+       ============================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .app-wrapper { display: flex; min-height: 100vh; }
+    .hidden { display: none !important; }
+
+    /* ==============================
+       SIDEBAR
+       ============================== */
+    #sidebar {
+      width: 256px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #sidebar.w-16 { width: 64px; }
+
+    .sidebar-header {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-logo {
+      width: 40px; height: 40px;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    nav { padding: 1rem; flex: 1; }
+    
+    .nav-link, .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      color: inherit;
+      text-decoration: none;
+      transition: background 0.2s, opacity 0.3s;
+      width: 100%;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      margin-bottom: 0.25rem;
+    }
+
+    .nav-link:hover, .nav-btn:hover { background: var(--border-color); }
+    .opacity-0 { opacity: 0; pointer-events: none; white-space: nowrap; }
+
+    /* ==============================
+       MAIN CONTENT & TOOLBAR
+       ============================== */
+    main { flex: 1; padding: 1.5rem; max-width: 100%; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: inherit;
+      font-family: inherit;
+    }
+
+    .filter-select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow);
+    }
+
+    .card-label { font-size: 12px; color: var(--text-muted); }
+    .card-value { font-size: 24px; font-weight: bold; }
+
+    /* ==============================
+       TABLE STYLES
+       ============================== */
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { text-align: left; padding: 0.75rem 1rem; background: rgba(0,0,0,0.02); color: var(--text-muted); }
+    td { padding: 0.75rem 1rem; border-top: 1px solid var(--border-color); transition: padding 0.2s ease; }
+    tr:hover { background: rgba(0,0,0,0.01); }
+
+    table.compact-mode { font-size: 12px; }
+    table.compact-mode td, table.compact-mode th { padding: 0.35rem 0.75rem; }
+
+    /* ==============================
+       MODAL & CHAT UI
+       ============================== */
+    #modal {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modal.flex { display: flex; }
+
+    .modal-content {
+      background: var(--card-bg);
+      width: 90%;
+      max-width: 600px;
+      padding: 1.5rem;
+      border-radius: 12px;
+    }
+
+    .chat-glass {
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, var(--glass-bg), rgba(255,255,255,0.01));
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+    }
+
+    #chatWindow { width: 384px; max-width: 90vw; border-radius: 12px; padding: 1rem; position: relative; }
+
+    /* ==============================
+       TOAST SYSTEM
+       ============================== */
+    #toast-container {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: var(--sidebar-bg);
+      color: var(--text-color);
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      font-size: 14px;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .md-block { display: none; }
+      #sidebar { position: fixed; height: 100%; z-index: 90; left: -256px; }
+      #sidebar.active { left: 0; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app-wrapper">
+
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="brand-logo">ICT</div>
+        <div class="brand-text">
+          <h1 style="font-size: 18px; font-weight: 600;">Logbook</h1>
+          <p style="font-size: 12px; color: var(--text-muted);">Digitized Ops</p>
+        </div>
+      </div>
+      <button id="collapseBtn" class="nav-btn" style="width: auto;"><i class="fa-solid fa-chevron-left"></i></button>
+    </div>
+
+    <nav>
+      <a class="nav-link" href="#"><i class="fa-solid fa-table-cells"></i> <span>Dashboard</span></a>
+      <a class="nav-link" href="#logs"><i class="fa-solid fa-book"></i> <span>Logs</span></a>
+      <button id="exportCsv" class="nav-btn"><i class="fa-solid fa-file-csv"></i> <span>Export CSV</span></button>
+      <label class="nav-btn">
+        <i class="fa-solid fa-file-import"></i> <span>Import CSV</span>
+        <input id="importCsv" type="file" accept=".csv" class="hidden"/>
+      </label>
+    </nav>
+
+    <div style="padding: 1rem; border-top: 1px solid var(--border-color); margin-top: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <p style="font-size: 11px; color: var(--text-muted);">Theme</p>
+          <p id="themeLabel" style="font-size: 12px; font-weight: 600;">Light</p>
+        </div>
+        <button id="themeToggle" class="btn-primary" style="padding: 4px 12px;">Toggle</button>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        <h2 style="font-size: 30px; font-weight: 700;">Dashboard</h2>
+        <p style="font-size: 14px; color: var(--text-muted);">ICT Workshop Logbook</p>
+      </div>
+      <div style="display: flex; gap: 0.75rem;">
+        <button id="addEntryBtn" class="btn-primary">
+          <i class="fa-solid fa-plus"></i> Add Entry
+        </button>
+        <button id="compactToggle" style="background: transparent; border: 1px solid var(--border-color); color: inherit; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;">
+          <i class="fa-solid fa-compress"></i> Compact
+        </button>
+      </div>
+    </header>
+
+    <section class="stats-grid">
+      <div class="card">
+        <p class="card-label">Tickets Open</p>
+        <p id="statOpen" class="card-value">0</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Resolved Today</p>
+        <p id="statResolvedToday" class="card-value">0</p>
+      </div>
+      <div class="card">
+        <p class="card-label">Pending</p>
+        <p id="statPending" class="card-value">0</p>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <input type="text" id="globalSearch" class="search-input" placeholder="Search technicians, devices, or descriptions...">
+      <select id="statusFilter" class="filter-select">
+        <option value="All">All Statuses</option>
+        <option value="Open">Open</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Resolved">Resolved</option>
+      </select>
+    </div>
+
+    <section id="logs" class="md-block">
+      <div class="table-container">
+        <table id="logTable">
+          <thead>
+            <tr>
+              <th>ID</th><th>Date</th><th>Technician</th><th>Device</th><th>Issue</th><th>Status</th><th>Priority</th>
+            </tr>
+          </thead>
+          <tbody id="logTbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="cardList" style="display: block; margin-top: 1rem;"></section>
+
+    <footer style="margin-top: 2rem; font-size: 12px; color: var(--text-muted);">
+      Prototype v1.0 — LiisH Verified Build.
+    </footer>
+  </main>
+</div>
+
+<div id="modal">
+  <div class="modal-content">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+      <h2 style="font-size: 20px; font-weight: 600;">Add Log Entry</h2>
+      <button id="modalClose" style="background:none; border:none; color:inherit; cursor:pointer;"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form id="entryForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div style="display: flex; flex-direction: column;"><label style="font-size:12px; font-weight:600;">Technician *</label><input name="technician" required style="padding:10px; border:1px solid var(--border-color); border-radius:6px; background:inherit; color:inherit;"/></div>
+      <div style="display: flex; flex-direction: column;"><label style="font-size:12px; font-weight:600;">Device *</label><input name="device" required style="padding:10px; border:1px solid var(--border-color); border-radius:6px; background:inherit; color:inherit;"/></div>
+      <div style="grid-column: span 2; display: flex; flex-direction: column;"><label style="font-size:12px; font-weight:600;">Issue Description *</label><textarea name="description" required rows="3" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; background:inherit; color:inherit; font-family:inherit;"></textarea></div>
+      <div style="display: flex; flex-direction: column;"><label style="font-size:12px; font-weight:600;">Status</label><select name="status" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; background:var(--card-bg); color:inherit;"><option>Open</option><option>In Progress</option><option>Resolved</option></select></div>
+      <div style="display: flex; flex-direction: column;"><label style="font-size:12px; font-weight:600;">Priority</label><select name="priority" style="padding:10px; border:1px solid var(--border-color); border-radius:6px; background:var(--card-bg); color:inherit;"><option>Low</option><option>Medium</option><option>High</option><option>Critical</option></select></div>
+      <div style="grid-column: span 2; display: flex; justify-content: flex-end; gap: 12px; margin-top: 1rem;">
+        <button type="button" id="modalCancel" style="padding: 10px 20px; border: 1px solid var(--border-color); border-radius: 6px; background: transparent; color: inherit;">Cancel</button>
+        <button type="submit" class="btn-primary">Add Log Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="aiContainer" style="position: fixed; bottom: 24px; right: 24px; z-index: 100;">
+  <button id="chatFab" style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-color); color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3);"><i class="fa-solid fa-robot" style="font-size: 20px;"></i></button>
+  <div id="chatWindow" class="hidden chat-glass" style="margin-top: 12px; width: 350px; padding: 15px; border-radius: 12px;">
+    <div id="chatLog" style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;"></div>
+    <form id="chatForm" style="display: flex; gap: 5px;"><input id="chatInput" placeholder="Ask assistant..." required style="flex: 1; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: inherit; border-radius: 6px;"/><button type="submit" class="btn-primary" style="padding: 10px;"><i class="fa-solid fa-paper-plane"></i></button></form>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+let logs = JSON.parse(localStorage.getItem("logs") || "[]");
+const saveLogs = () => localStorage.setItem("logs", JSON.stringify(logs));
+const genId = () => "LOG-" + Math.floor(Math.random() * 999999);
+const today = () => new Date().toISOString().split("T")[0];
+
+function showToast(message) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// THE SEARCH ENGINE (REFINED)
+function renderLogs() {
+  const tbody = document.getElementById("logTbody");
+  const cardList = document.getElementById("cardList");
+  const searchQuery = document.getElementById("globalSearch").value.toLowerCase();
+  const statusFilter = document.getElementById("statusFilter").value;
+  
+  tbody.innerHTML = ""; 
+  cardList.innerHTML = "";
+
+  const filtered = logs.filter(log => {
+    const matchesSearch = log.technician.toLowerCase().includes(searchQuery) || 
+                          log.device.toLowerCase().includes(searchQuery) || 
+                          log.description.toLowerCase().includes(searchQuery) ||
+                          log.id.toLowerCase().includes(searchQuery);
+    const matchesStatus = statusFilter === "All" || log.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--text-muted);">No matching logs found.</td></tr>`;
+  }
+
+  filtered.forEach((log) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${log.id}</td><td>${log.date}</td><td>${log.technician}</td><td>${log.device}</td><td>${log.description}</td><td>${log.status}</td><td>${log.priority}</td>`;
+    tbody.appendChild(tr);
+
+    const card = document.createElement("div");
+    card.className = "card"; card.style.marginBottom = "10px";
+    card.innerHTML = `<strong>${log.device}</strong><br><small>${log.description}</small>`;
+    cardList.appendChild(card);
+  });
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById("statOpen").textContent = logs.filter(l => l.status === "Open").length;
+  document.getElementById("statResolvedToday").textContent = logs.filter(l => l.status === "Resolved" && l.date === today()).length;
+  document.getElementById("statPending").textContent = logs.filter(l => l.status === "In Progress").length;
+}
+
+// Event Listeners for Search & Filter
+document.getElementById("globalSearch").addEventListener("input", renderLogs);
+document.getElementById("statusFilter").addEventListener("change", renderLogs);
+
+// Modal Handlers
+const modalEl = document.getElementById("modal");
+document.getElementById("addEntryBtn").onclick = () => modalEl.classList.add("flex");
+document.getElementById("modalClose").onclick = () => modalEl.classList.remove("flex");
+document.getElementById("entryForm").onsubmit = function(e) {
+  e.preventDefault();
+  const fd = new FormData(this);
+  logs.unshift({ id: genId(), date: today(), technician: fd.get("technician"), device: fd.get("device"), description: fd.get("description"), status: fd.get("status"), priority: fd.get("priority") });
+  saveLogs(); renderLogs(); modalEl.classList.remove("flex"); this.reset();
+  showToast("Entry Logged Successfully");
+};
+
+// Compact Toggle
+const applyCompactMode = () => {
+  const isCompact = localStorage.getItem("compactMode") === "true";
+  document.getElementById("logTable").classList.toggle("compact-mode", isCompact);
+};
+document.getElementById("compactToggle").onclick = () => {
+  const currentState = localStorage.getItem("compactMode") === "true";
+  localStorage.setItem("compactMode", !currentState);
+  applyCompactMode();
+  showToast(!currentState ? "Compact Mode Active" : "Standard View Active");
+};
+
+// Theme Toggle
+const applyTheme = () => {
+  const mode = localStorage.getItem("theme") || "light";
+  document.documentElement.classList.toggle("dark", mode === "dark");
+  document.getElementById("themeLabel").textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+};
+document.getElementById("themeToggle").onclick = () => {
+  const next = (localStorage.getItem("theme") || "light") === "light" ? "dark" : "light";
+  localStorage.setItem("theme", next); applyTheme();
+};
+
+// Sidebar Collapse
+document.getElementById("collapseBtn").onclick = () => {
+  document.getElementById("sidebar").classList.toggle("w-16");
+  document.querySelectorAll("span, .brand-text").forEach(el => el.classList.toggle("opacity-0"));
+};
+
+// Chat Handler
+document.getElementById("chatFab").onclick = () => document.getElementById("chatWindow").classList.toggle("hidden");
+document.getElementById("chatForm").onsubmit = function(e) {
+  e.preventDefault();
+  const input = document.getElementById("chatInput");
+  const log = document.getElementById("chatLog");
+  const uMsg = document.createElement("div"); 
+  uMsg.textContent = input.value;
+  uMsg.style.cssText = "align-self: flex-end; background: var(--primary-color); color: white; padding: 8px; border-radius: 8px; font-size: 13px;";
+  log.appendChild(uMsg);
+  input.value = "";
+  log.scrollTop = log.scrollHeight;
+};
+
+// Initialize
+applyTheme();
+applyCompactMode();
+renderLogs();
+</script>
+</body>
+</html>
